@@ -3,31 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Mini App</title>
+    <title>Menu Tabs</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #e7b8b8;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .menu-header {
+            padding: 20px;
+            background-color: #f7ce4d;
+            /* width: 100%; */
+        }
+
+        h1 {
+            margin: 0;
+            color: #5b3a0c;
+        }
+
+        /* Styling for tabs */
+        .tabs {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f7f7f7;
+            background-color: transparent;
+            padding: 10px;
+            margin-top: 20px;
         }
-        h1 {
-            font-size: 2rem;
+
+        .tabs button {
+            background-color: transparent;
+            border: 1px solid rgb(255, 255, 255);
+            border-radius: 120px;
+            width: 110px;
+            color: #FFF;
+            padding: 13px 20px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease-in-out;
+        }
+        
+        .tabs button:hover {
+            /* background-color: #ddd; */
+        }
+        
+        .tabs button.active {
+            border: NONE;
+            background-color: #f7ce4d;
+            color: #0000009d;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .content h2 {
+            margin-bottom: 10px;
+            color: #5b3a0c;
+        }
+
+        .content p {
+            color: #333;
+            font-size: 16px;
+        }
+
+        /* Cards styling */
+        .cards {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            /* width: 310px; */
+            width: 100%;
+            max-width: 310px;
+            margin:  10px 10px 10px 0;
+            padding: 0px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .card-inner{
+            padding: 15px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .card h3 {
+            margin: 10px 0 5px;
+            color: #5b3a0c;
+            font-size: 18px;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .card span {
+            font-weight: bold;
+            color: #5b3a0c;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive adjustments for small screens */
+        @media (max-width: 599px) {
+            body {
+                text-align: left;
+            }
+            .card-inner{
+            padding: 15px;
+        }
+
+            .wrapper{
+                display: flex;
+            }
+
+            .tabs {
+                flex-direction: column;
+                /* position: fixed; */
+                /* top: 0; */
+                /* left: 0; */
+                /* width: 0px; */
+                height: 100vh;
+                padding: 10px 0;
+                margin:0;
+                background-color: #222;
+                justify-content: flex-start;
+                align-items: center;
+                z-index: 10;
+            }
+
+            .tabs button {
+                display: block;
+                background-color: #333;
+                color: #fff;
+                padding: 15px;
+                margin: 5px 5px;
+                font-size: 14px;
+                width: 100px;
+            }
+
+            .tabs button.active {
+                background-color: #f7ce4d;
+                color: #000;
+            }
+
+            .content {
+                padding-left: 10px;
+                padding-top: 0px;
+                /* width: 100%; */
+            }
         }
     </style>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <h1>Hello World from Telegram Mini App</h1>
-    <script>
-        // Initialize the Telegram Web App interface
-        Telegram.WebApp.ready();
 
-        // Send an alert when the Web App is loaded
-        alert('Telegram Mini App Loaded');
+    <!-- Menu Heading -->
+    <div class="menu-header">
+        <h1>Our Menu</h1>
+    </div>
+
+    <div class="wrapper">
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-link active" onclick="openTab(event, 'Breakfast')">Breakfast</button>
+        <button class="tab-link" onclick="openTab(event, 'Lunch')">Lunch</button>
+        <button class="tab-link" onclick="openTab(event, 'Salads')">Salads</button>
+        <button class="tab-link" onclick="openTab(event, 'Cakes')">Cakes</button>
+        <button class="tab-link" onclick="openTab(event, 'Drinks')">Drinks</button>
+        <button class="tab-link" onclick="openTab(event, 'Catering')">Catering</button>
+    </div>
+<div>
+    <!-- Tab Content -->
+    <div id="Breakfast" class="content active">
+        <h2>Breakfast</h2>
+        <p>All breakfasts are served with toast, eggs, and fresh juice.</p>
+        <div class="cards">
+            <div class="card">
+                <img src="/assets/img1.jpeg" alt="Dish Image">
+                <div class="card-inner">
+                <h3>Breakfast 1</h3>
+                <p>Description of breakfast item.</p>
+                <span>$15.00</span>
+            </div>
+            </div>
+            <div class="card">
+                <img src="/assets/img2.jpeg" alt="Dish Image">
+                <div class="card-inner">
+                <h3>Breakfast 2</h3>
+                <p>Description of breakfast item.</p>
+                <span>$12.00</span>
+            </div>
+            </div>
+            <div class="card">
+                <img src="/assets/img3.jpeg" alt="Dish Image">
+                <div class="card-inner">
+                <h3>Breakfast 3</h3>
+                <p>Description of breakfast item.</p>
+                <span>$10.00</span>
+            </div>
+            </div>
+            <div class="card">
+                <img src="/assets/img3.jpeg" alt="Dish Image">
+                <div class="card-inner">
+                <h3>Breakfast 3</h3>
+                <p>Description of breakfast item.</p>
+                <span>$10.00</span>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Lunch" class="content">
+        <h2>Lunch</h2>
+        <p>Our lunch menu offers a variety of options, including vegan and gluten-free choices.</p>
+        <div class="cards">
+            <div class="card">
+                <img src="/assets/img4.jpeg" alt="Dish Image">
+                <div class="card-inner">
+                    <h3>Lunch 1</h3>
+                    <p>Description of lunch item.</p>
+                    <span>$20.00</span>
+                </div>
+            </div>
+            <div class="card">
+                <img src="/assets/img5.jpeg" alt="Dish Image">
+                <div class="card-inner">
+
+                    <h3>Lunch 2</h3>
+                    <p>Description of lunch item.</p>
+                    <span>$18.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Salads" class="content">
+        <h2>Salads</h2>
+        <p>Our salads are made with fresh, organic ingredients.</p>
+        <div class="cards">
+            <div class="card">
+                <img src="/assets/img6.jpeg" alt="Dish Image">
+                <div class="card-inner">
+                    <h3>Salad 1</h3>
+                    <p>Description of salad item.</p>
+                    <span>$8.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Cakes" class="content">
+        <h2>Cakes</h2>
+        <p>Delicious cakes baked fresh daily.</p>
+        <div class="cards">
+            <div class="card">
+                <img src="/assets/img1.jpeg" alt="Dish Image">
+                <div class="card-inner">
+                    <h3>Cake 1</h3>
+                    <p>Description of cake item.</p>
+                    <span>$7.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Drinks" class="content">
+        <h2>Drinks</h2>
+        <p>Refresh yourself with our beverages.</p>
+        <div class="cards">
+            <div class="card">
+                <img src="/assets/img2.jpeg" alt="Drink Image">
+                <div class="card-inner">
+                    <h3>Drink 1</h3>
+                    <p>Description of drink.</p>
+                    <span>$5.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Catering" class="content">
+        <h2>Catering</h2>
+        <p>Let us cater your next event with our customizable catering options.</p>
+        <div class="cards">
+            <div class="card">
+                <img src="/assets/img3.jpeg" alt="Dish Image">
+                <div class="card-inner">
+                    <h3>Catering Option 1</h3>
+                    <p>Description of catering item.</p>
+                    <span>$150.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <script>
+        function openTab(event, tabName) {
+            var i, tabContent, tabLinks;
+
+            // Hide all content
+            tabContent = document.getElementsByClassName("content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+                tabContent[i].classList.remove("active");
+            }
+
+            // Remove active class from buttons
+            tabLinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].classList.remove("active");
+            }
+
+            // Show current tab content and set button to active
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+
+        // Initialize the first tab as active
+        document.getElementsByClassName("tab-link")[0].click();
     </script>
 </body>
 </html>
