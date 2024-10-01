@@ -1,34 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Mini App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0 40px;
-            text-align: center;
-            background-color: #f7f7f7;
-        }
-        h1 {
-            font-size: 2rem;
-        }
-    </style>
-    <!-- <script src="https://telegram.org/js/telegram-web-app.js"></script> -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tap Tap Game</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    .game-container {
+      text-align: center;
+    }
+
+    .rat-image {
+      width: 150px;
+      height: auto;
+      cursor: pointer;
+    }
+
+    .counter {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Hello World from Telegram Mini App</h1>
-    <script>
-        // // Initialize the Telegram Web App interface
-        // Telegram.WebApp.ready();
 
-        // // Send an alert when the Web App is loaded
-       
-    </script>
+  <div class="game-container">
+    <h1>Tap the Rat!</h1>
+    <img src="/rat.jpeg" alt="Cute Rat" class="rat-image" id="ratImage">
+    <div class="counter">Taps: <span id="tapCounter">0</span></div>
+  </div>
+
+  <script>
+    let tapCount = 0;
+    
+    const ratImage = document.getElementById('ratImage');
+    const tapCounter = document.getElementById('tapCounter');
+
+    // Increment the counter when the rat image is clicked/tapped
+    ratImage.addEventListener('click', () => {
+      tapCount++;
+      tapCounter.textContent = tapCount;
+    });
+  </script>
+
 </body>
 </html>
