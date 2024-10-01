@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tap Tap Game</title>
+  <title>Tap Tap Game with Scoreboard</title>
   <style>
     body {
       display: flex;
@@ -17,30 +17,27 @@
 
     .game-container {
       text-align: center;
-      
-    display: flex;
-    flex-direction: column;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .rat-image {
       width: 100%;
-      border-radius: 220px;
       max-width: 220px;
+      margin: 20px 0 0;
+      border-radius:220px;
       height: auto;
       cursor: pointer;
-      user-select: none; /* Prevent long-press actions on mobile */
-      -webkit-tap-highlight-color: transparent; /* Remove blue layer on tap for mobile */
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .counter {
+    .counter, .timer {
       font-size: 24px;
       margin-top: 20px;
-    }
-
-    .timer {
-      font-size: 20px;
-      margin-bottom: 20px;
-      color: #ff0000;
+      display: none; /* Hidden initially */
     }
 
     .game-over {
@@ -49,56 +46,118 @@
       color: #ff0000;
     }
 
-    .restart-button {
-      display: none;
+    .start-button {
       padding: 10px 20px;
       background-color: #4CAF50;
       color: white;
       border: none;
-      cursor: pointer;
+      cursor: not-allowed;
       margin-top: 20px;
       font-size: 18px;
     }
 
-    .restart-button:hover {
+    .start-button.enabled {
+      cursor: pointer;
       background-color: #45a049;
     }
 
+    .scoreboard {
+      margin-top: 40px;
+    }
+
+    .scoreboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .scoreboard-table th, .scoreboard-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .scoreboard-table th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .initial-inputfield{
+        padding: 11px;
+    }
   </style>
 </head>
 <body>
 
   <div class="game-container">
     <h1>Tap the Rat!</h1>
-    <div class="timer">Time left: <span id="timer">10</span>s</div>
-    <img src="/rat.jpeg" alt="Cute Rat" class="rat-image" id="ratImage">
+    <input class="initial-inputfield" type="text" id="userInitials" placeholder="Enter your initials (max 3 letters)" maxlength="3">
+    <button class="start-button" id="startButton" disabled>Start Game</button>
+    
+    <div id="timerremover" class="timer" >Time left: <span id="timer">10</span>s</div>
+    <img src="/rat.jpeg" alt="Cute Rat" class="rat-image" id="ratImage" style="display: none;">
     <div class="counter">Taps: <span id="tapCounter">0</span></div>
     <div class="game-over" id="gameOver">Game Over! Your score: <span id="finalScore">0</span></div>
-    <button class="restart-button" id="restartButton">Restart Game</button>
+
+    <div class="scoreboard" id="scoreboard">
+      <h2>Scoreboard - Top 10 Scores</h2>
+      <table class="scoreboard-table">
+        <thead>
+          <tr>
+            <th>Initials</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody id="scoreTableBody">
+          <!-- Scores will be dynamically inserted here -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <audio id="tapSound" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
 
   <script>
     let tapCount = 0;
-    let timeLeft = 10;  // 10 seconds for the game
+    let timeLeft = 10;  
     let gameInterval;
+    let gameStarted = false;
+    let scoreHistory = [];
+
     const ratImage = document.getElementById('ratImage');
     const tapCounter = document.getElementById('tapCounter');
     const timerElement = document.getElementById('timer');
     const gameOverElement = document.getElementById('gameOver');
-    const finalScoreElement = document.getElementById('finalScore');
-    const restartButton = document.getElementById('restartButton');
+    const startButton = document.getElementById('startButton');
+    const userInitialsInput = document.getElementById('userInitials');
+    const scoreTableBody = document.getElementById('scoreTableBody');
     const tapSound = document.getElementById('tapSound');
 
+    // Enable start button if initials are valid
+    userInitialsInput.addEventListener('input', () => {
+      if (userInitialsInput.value.trim().length === 3) {
+        startButton.disabled = false;
+        startButton.classList.add('enabled');
+      } else {
+        startButton.disabled = true;
+        startButton.classList.remove('enabled');
+      }
+    });
+
+    // Function to start the game
     function startGame() {
+      if (gameStarted) return;
+      gameStarted = true;
+
       tapCount = 0;
-      timeLeft = 20;
+      timeLeft = 1;
       tapCounter.textContent = tapCount;
       timerElement.textContent = timeLeft;
       gameOverElement.style.display = 'none';
-      restartButton.style.display = 'none';
+      startButton.style.display = 'none';
+      userInitialsInput.style.display = 'none';
       ratImage.style.display = 'block';
+      tapCounter.parentElement.style.display = 'block'; // Show tap counter
+      timerElement.parentElement.style.display = 'block'; // Show timer
+
       gameInterval = setInterval(() => {
         if (timeLeft > 0) {
           timeLeft--;
@@ -109,12 +168,46 @@
       }, 1000);
     }
 
+    // Function to end the game
     function endGame() {
       clearInterval(gameInterval);
+      gameStarted = false;
       ratImage.style.display = 'none';
+      timerremover.style.display = 'none';
       gameOverElement.style.display = 'block';
-      finalScoreElement.textContent = tapCount;
-      restartButton.style.display = 'block';
+      gameOverElement.textContent = `Game Over! Your score: ${tapCount}`;
+      startButton.style.display = 'block';
+      userInitialsInput.style.display = 'inline';
+      startButton.disabled = true;
+      startButton.classList.remove('enabled');
+
+      saveScore(userInitialsInput.value.toUpperCase(), tapCount);
+      displayScoreboard();
+    }
+
+    // Function to save the score with initials
+    function saveScore(initials, score) {
+      scoreHistory.push({ initials, score });
+      scoreHistory.sort((a, b) => b.score - a.score);  // Sort by highest score
+      if (scoreHistory.length > 10) scoreHistory.pop();  // Keep only last 10
+    }
+
+    // Function to display the scoreboard
+    function displayScoreboard() {
+      scoreTableBody.innerHTML = '';  // Clear the table
+
+      scoreHistory.forEach(entry => {
+        const row = document.createElement('tr');
+        const initialsCell = document.createElement('td');
+        const scoreCell = document.createElement('td');
+        
+        initialsCell.textContent = entry.initials;
+        scoreCell.textContent = entry.score;
+        
+        row.appendChild(initialsCell);
+        row.appendChild(scoreCell);
+        scoreTableBody.appendChild(row);
+      });
     }
 
     // Increment the counter and play sound when the rat image is clicked/tapped
@@ -124,14 +217,14 @@
       tapSound.play();
     });
 
-    // Restart the game
-    restartButton.addEventListener('click', startGame);
+    // Start the game when the button is clicked
+    startButton.addEventListener('click', startGame);
 
     // Prevent the default long-press actions on mobile
     ratImage.addEventListener('contextmenu', (e) => e.preventDefault());
 
-    // Start the game for the first time
-    startGame();
+    // Display the scoreboard on load
+    displayScoreboard();
   </script>
 
 </body>
