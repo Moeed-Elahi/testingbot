@@ -17,39 +17,121 @@
 
     .game-container {
       text-align: center;
+      
+    display: flex;
+    flex-direction: column;
     }
 
     .rat-image {
-      width: 150px;
+      width: 100%;
+      border-radius: 220px;
+      max-width: 220px;
       height: auto;
       cursor: pointer;
+      user-select: none; /* Prevent long-press actions on mobile */
+      -webkit-tap-highlight-color: transparent; /* Remove blue layer on tap for mobile */
     }
 
     .counter {
       font-size: 24px;
       margin-top: 20px;
     }
+
+    .timer {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #ff0000;
+    }
+
+    .game-over {
+      display: none;
+      font-size: 24px;
+      color: #ff0000;
+    }
+
+    .restart-button {
+      display: none;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    .restart-button:hover {
+      background-color: #45a049;
+    }
+
   </style>
 </head>
 <body>
 
   <div class="game-container">
     <h1>Tap the Rat!</h1>
+    <div class="timer">Time left: <span id="timer">10</span>s</div>
     <img src="/rat.jpeg" alt="Cute Rat" class="rat-image" id="ratImage">
     <div class="counter">Taps: <span id="tapCounter">0</span></div>
+    <div class="game-over" id="gameOver">Game Over! Your score: <span id="finalScore">0</span></div>
+    <button class="restart-button" id="restartButton">Restart Game</button>
   </div>
+
+  <audio id="tapSound" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
 
   <script>
     let tapCount = 0;
-    
+    let timeLeft = 10;  // 10 seconds for the game
+    let gameInterval;
     const ratImage = document.getElementById('ratImage');
     const tapCounter = document.getElementById('tapCounter');
+    const timerElement = document.getElementById('timer');
+    const gameOverElement = document.getElementById('gameOver');
+    const finalScoreElement = document.getElementById('finalScore');
+    const restartButton = document.getElementById('restartButton');
+    const tapSound = document.getElementById('tapSound');
 
-    // Increment the counter when the rat image is clicked/tapped
+    function startGame() {
+      tapCount = 0;
+      timeLeft = 1;
+      tapCounter.textContent = tapCount;
+      timerElement.textContent = timeLeft;
+      gameOverElement.style.display = 'none';
+      restartButton.style.display = 'none';
+      ratImage.style.display = 'block';
+      gameInterval = setInterval(() => {
+        if (timeLeft > 0) {
+          timeLeft--;
+          timerElement.textContent = timeLeft;
+        } else {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      ratImage.style.display = 'none';
+      gameOverElement.style.display = 'block';
+      finalScoreElement.textContent = tapCount;
+      restartButton.style.display = 'block';
+    }
+
+    // Increment the counter and play sound when the rat image is clicked/tapped
     ratImage.addEventListener('click', () => {
       tapCount++;
       tapCounter.textContent = tapCount;
+      tapSound.play();
     });
+
+    // Restart the game
+    restartButton.addEventListener('click', startGame);
+
+    // Prevent the default long-press actions on mobile
+    ratImage.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    // Start the game for the first time
+    startGame();
   </script>
 
 </body>
